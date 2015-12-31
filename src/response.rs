@@ -12,19 +12,25 @@ pub struct Response {
 
 impl Response {
     pub fn new(headers: &str, body: &str) -> Response {
+        println!("pre000");
         let mut http_version = String::new();
         let mut status_code: u16 = 0;
         let mut status_message = String::new();
         let mut refined_headers: HashMap<String, String> = HashMap::new();
+        println!("pre000");
         let lines: Vec<&str> = headers.split("\r\n").collect();
         let mut index = 0;
+        println!("pre0");
         for line in lines.iter() {
             index += 1;
 
             if index == 1 {
                 let items: Vec<&str> = line.split(" ").collect();
                 if items.len() < 2 { continue; }
+                println!("pre");
                 http_version = items[0].to_string();
+                println!("a {}", http_version);
+
                 status_code = match std::str::FromStr::from_str(items[1]) {
                     Ok(i) => i,
                     Err(_) => 0
@@ -36,15 +42,17 @@ impl Response {
             let items: Vec<&str> = line.split(": ").collect();
             if items.len() != 2 { continue; }
             let key = items[0].to_string();
+            println!("b {}", key);
             let value = items[1].to_string();
-            refined_headers.insert(key, value);
+            println!("c {}", value);
+            //refined_headers.insert(key, value);
         }
         let response = Response {
             http_version: http_version,
             status_code: status_code,
             status_message: status_message,
             headers: refined_headers,
-            body: body.to_string()
+            body: "".to_string()
         };
         return response;
     }
@@ -104,7 +112,7 @@ impl Response {
             504 => "Gateway Timeout",
             505 => "HTTP Version Not Supported",
             511 => "Network Authentication Required",
-            
+
             // error
             _ => ""
         };

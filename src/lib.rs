@@ -69,7 +69,7 @@ fn connect(method: &str,
             }
         }
     };
-    
+    println!("pre0o");
     // headers
     match headers.entry("Content-Length".to_string()) {
         Occupied(entry) => { entry.remove(); }
@@ -82,6 +82,7 @@ fn connect(method: &str,
         let value = header.1;
         http_headers.push_str(&format!("\r\n{}: {}", key, value));
     }
+    println!("pre0oo");
     http_headers.push_str("\r\n\r\n");
     
     let http_content = format!("{} {} HTTP/1.1\r\nHost: {}{}",
@@ -94,6 +95,7 @@ fn connect(method: &str,
     for x in http_content.as_bytes() { buf.push(*x); }
     for x in body { buf.push(*x); }
 
+    println!("pre0ooo");
     // stream
     let mut stream = match TcpStream::connect(&*addr) {
         Ok(stream) => stream,
@@ -103,12 +105,15 @@ fn connect(method: &str,
             return Err(err);
         }
     };
-
+    println!("pre0oooo");
     // raw
     let raw = match url.protocol {
         Protocol::HTTP => {
+            println!("--");
             let _ = stream.write(&*buf);
+            println!("---");
             let raw = try!(read(&mut stream));
+            println!("----");
             raw
         }
         Protocol::HTTPS => {
@@ -137,6 +142,7 @@ fn connect(method: &str,
     };
 
     // response
+    println!("pre0000");
     let response = try!(get_response(&raw));
     
     // redirect
